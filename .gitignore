@@ -39,3 +39,4 @@ storage/
 tmp/storage
 vendor/
 .idea/
+/test/
