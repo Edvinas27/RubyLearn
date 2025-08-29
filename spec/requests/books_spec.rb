@@ -13,45 +13,46 @@ describe "Books API", type: :request do
   end
 
   describe "POST /api/v1/books" do
-    it "creates a book" do
-      book_params = { book: {title: "Gyvuliu Ukis", author: "George Orwell"}}
-      post "/api/v1/books", params: book_params
+    context "with valid parameters" do
+      it "creates a book" do
+        book_params = { book: {title: "Gyvuliu Ukis", author: "George Orwell"}}
+        post "/api/v1/books", params: book_params
 
-      expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)["title"]).to eq("Gyvuliu Ukis")
-      expect(JSON.parse(response.body)["author"]).to eq("George Orwell")
+        expect(response).to have_http_status(:created)
+        expect(JSON.parse(response.body)["title"]).to eq("Gyvuliu Ukis")
+        expect(JSON.parse(response.body)["author"]).to eq("George Orwell")
+      end
     end
 
-    it "does not create a book with invalid title" do
-      book_params = { book: {title: "1", author: "George Orwell"}}
-      post "/api/v1/books", params: book_params
+    context "with invalid parameters" do
+      it "returns error when title is too short" do
+        book_params = { book: {title: "1", author: "George Orwell"}}
+        post "/api/v1/books", params: book_params
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(JSON.parse(response.body)["title"]).to include("is too short (minimum is 3 characters)")
-    end
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["title"]).to include("is too short (minimum is 3 characters)")
+      end
+      it "returns error when author name is too short" do
+        book_params = { book: {title: "Gyvuliu Ukis", author: "1"}}
+        post "/api/v1/books", params: book_params
 
-    it "does not create a book with invalid author" do
-      book_params = { book: {title: "Gyvuliu Ukis", author: "1"}}
-      post "/api/v1/books", params: book_params
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["author"]).to include("is too short (minimum is 4 characters)")
+      end
+      it "returns error when title is blank" do
+        book_params = { book: {author: "George Orwell"}}
+        post "/api/v1/books", params: book_params
 
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(JSON.parse(response.body)["author"]).to include("is too short (minimum is 4 characters)")
-    end
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["title"]).to include("can't be blank")
+      end
+      it "returns error when author name is blank" do
+        book_params = { book: {title: "Gyvuliu Ukis"}}
+        post "/api/v1/books", params: book_params
 
-    it "does not create a book with missing title" do
-      book_params = { book: {author: "George Orwell"}}
-      post "/api/v1/books", params: book_params
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(JSON.parse(response.body)["title"]).to include("can't be blank")
-    end
-
-    it "does not create a book with missing author" do
-      book_params = { book: {title: "Gyvuliu Ukis"}}
-      post "/api/v1/books", params: book_params
-
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(JSON.parse(response.body)["author"]).to include("can't be blank")
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(JSON.parse(response.body)["author"]).to include("can't be blank")
+      end
     end
   end
 end
