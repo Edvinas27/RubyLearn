@@ -1,6 +1,6 @@
 class BooksController < ApplicationController
   def index
-    render json: Book.all, only: [:id, :title, :author]
+    render json: Book.all, only: %i[id title author]
   end
 
   def create
@@ -21,6 +21,7 @@ class BooksController < ApplicationController
   private
 
   def book_params
-    params.require(:book).permit(:title, :author)
+    params.require(:book).permit(%i[title author])
   end
+
 end
