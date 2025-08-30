@@ -20,7 +20,7 @@ class Api::V1::BooksController < ApplicationController
 
   def show
     if params[:id] !~ /^\d+$/ # Check if ID is not a number
-      render json: {errors: "Invalid ID format"}, status: :bad_request and return
+      render json: {errors: ["Invalid ID Format"]}, status: :bad_request and return
     end
 
     book = Book.find(params[:id])

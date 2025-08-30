@@ -29,12 +29,12 @@ describe "Books API", type: :request do
     end
 
     context "with invalid parameters" do
-      it "returns 404 when book does not exist" do
-        get "/api/v1/books/9999"
+      it "returns not_found when book does not exist" do
+        get "/api/v1/books/2048"
 
         expect(response).to have_http_status(:not_found)
       end
-      it "returns bad request when id is not a number" do
+      it "returns bad_request when id is not a number" do
         get "/api/v1/books/abc"
 
         expect(response).to have_http_status(:bad_request)
