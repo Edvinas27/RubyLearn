@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Books API", type: :request do
-  describe "GET /api/v1/books" do
+  describe "GET /api/v1/" do
     context "with valid parameters" do
       it "returns a list of books" do
         expect {
@@ -42,7 +42,7 @@ describe "Books API", type: :request do
     end
   end
 
-  describe "POST /api/v1/books" do
+  describe "POST /api/v1/" do
     context "with valid parameters" do
       it "creates a book" do
         book_params = { book: {title: "Gyvuliu Ukis", author: "George Orwell"}}
@@ -96,13 +96,13 @@ describe "Books API", type: :request do
     end
   end
 
-  describe "DELETE /api/v1/books/:id" do
+  describe "DELETE /api/v1/" do
     let!(:book) { FactoryBot.create(:book, title: "To Kill a Mockingbird", author: "Harper Lee") }
     context "with valid parameters" do
       it "deletes a book" do
         expect {
           delete "/api/v1/books/#{book.id}"
-        }.to change { Book.count }.from(1).to(0)
+        }.to change { Book.count }.by(-1)
 
         expect(response).to have_http_status(:no_content)
       end
