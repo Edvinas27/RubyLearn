@@ -4,12 +4,13 @@ describe "Books API", type: :request do
   describe "GET /api/v1/books" do
     context "with valid parameters" do
       it "returns a list of books" do
-        FactoryBot.create(:book, title: "The Art of War", author: "Sun Tzu")
-        FactoryBot.create(:book, title: "Le avventure di Cipollino", author: "Gianni Rodari")
-        get "/api/v1/books"
+        expect {
+          FactoryBot.create(:book, title: "The Art of War", author: "Sun Tzu")
+          FactoryBot.create(:book, title: "Le avventure di Cipollino", author: "Gianni Rodari")
+          get "/api/v1/books"
+        }.to change { Book.count }.from(0).to(2)
 
         expect(response).to have_http_status(:success)
-        expect(json_response.size).to eq(2)
       end
       it "returns an empty array when there are no books" do
         get "/api/v1/books"
@@ -18,7 +19,6 @@ describe "Books API", type: :request do
         expect(json_response).to eq([])
       end
       it "returns a book by id" do
-        FactoryBot.create(:book, title: "To Kill a Mockingbird", author: "Harper Lee")
         book = FactoryBot.create(:book, title: "Don Quixote", author: "Miguel de Cervantes")
         get "/api/v1/books/#{book.id}"
 
@@ -46,7 +46,9 @@ describe "Books API", type: :request do
     context "with valid parameters" do
       it "creates a book" do
         book_params = { book: {title: "Gyvuliu Ukis", author: "George Orwell"}}
-        post "/api/v1/books", params: book_params
+        expect {
+          post "/api/v1/books", params: book_params
+        }.to change { Book.count }.from(0).to(1)
 
         expect(response).to have_http_status(:created)
         expect(json_response[:title]).to eq("Gyvuliu Ukis")
@@ -57,31 +59,63 @@ describe "Books API", type: :request do
     context "with invalid parameters" do
       it "returns error when title is too short" do
         book_params = { book: {title: "1", author: "George Orwell"}}
-        post "/api/v1/books", params: book_params
+        expect {
+          post "/api/v1/books", params: book_params
+        }.not_to change { Book.count }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response[:title]).to include("is too short (minimum is 3 characters)")
       end
       it "returns error when author name is too short" do
         book_params = { book: {title: "Gyvuliu Ukis", author: "1"}}
-        post "/api/v1/books", params: book_params
+        expect {
+          post "/api/v1/books", params: book_params
+        }.not_to change { Book.count }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response[:author]).to include("is too short (minimum is 4 characters)")
       end
       it "returns error when title is blank" do
         book_params = { book: {author: "George Orwell"}}
-        post "/api/v1/books", params: book_params
+        expect {
+          post "/api/v1/books", params: book_params
+        }.not_to change { Book.count }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response[:title]).to include("can't be blank")
       end
       it "returns error when author name is blank" do
         book_params = { book: {title: "Gyvuliu Ukis"}}
-        post "/api/v1/books", params: book_params
+        expect {
+          post "/api/v1/books", params: book_params
+        }.not_to change { Book.count }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response[:author]).to include("can't be blank")
+      end
+    end
+  end
+
+  describe "DELETE /api/v1/books/:id" do
+    let!(:book) { FactoryBot.create(:book, title: "To Kill a Mockingbird", author: "Harper Lee") }
+    context "with valid parameters" do
+      it "deletes a book" do
+        expect {
+          delete "/api/v1/books/#{book.id}"
+        }.to change { Book.count }.from(1).to(0)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    context "with invalid parameters" do
+      it "returns not_found when book does not exist" do
+        expect {
+          delete "/api/v1/books/2048"
+        }.to_not change { Book.count }
+
+        expect(response).to have_http_status(:not_found)
+        expect(json_response[:errors].first).to include("Couldn't find Book", "2048")
       end
     end
   end
