@@ -5,12 +5,12 @@ describe "Books API", type: :request do
     context "with valid parameters" do
       it "returns a list of books" do
         expect {
-          FactoryBot.create(:book, title: "The Art of War", author: "Sun Tzu")
-          FactoryBot.create(:book, title: "Le avventure di Cipollino", author: "Gianni Rodari")
+          create_books(2, titles: ["The Art of War", "Le avventure di Cipollino"], authors: ["Sun Tzu", "Gianni Rodari"])
           get "/api/v1/books"
         }.to change { Book.count }.from(0).to(2)
 
         expect(response).to have_http_status(:success)
+        expect(json_response.map { |b| b[:title] }).to contain_exactly("The Art of War", "Le avventure di Cipollino")
       end
       it "returns an empty array when there are no books" do
         get "/api/v1/books"
