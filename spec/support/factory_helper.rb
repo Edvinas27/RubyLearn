@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module FactoryHelper
-  def create_books(count, titles:[], authors:[])
+  def create_books(count, titles: [], authors: [])
     count.times do |i|
       FactoryBot.create(
         :book,

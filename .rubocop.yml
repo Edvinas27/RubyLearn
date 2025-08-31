@@ -1,2 +1,19 @@
 AllCops:
   TargetRubyVersion: 3.3
+
+Style/Documentation:
+  Enabled: false
+
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+
+require:
+  - rubocop-factory_bot
+  - rubocop-rspec_rails
+
+RSpec/ExampleLength:
+  Max: 15
+
+RSpec/MultipleExpectations:
+  Max: 4
