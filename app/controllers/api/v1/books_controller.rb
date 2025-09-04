@@ -2,7 +2,7 @@
 
 module Api
   module V1
-    class BooksController < ApplicationController
+    class BooksController < ApiController
       def index
         render json: Book.all, status: :ok, only: %i[id title author]
       end
