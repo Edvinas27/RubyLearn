@@ -3,10 +3,11 @@
 module FactoryHelper
   def create_books(count, titles: [], authors: [])
     count.times do |i|
+      author = FactoryBot.create(:author, authors[i])
       FactoryBot.create(
         :book,
         title: titles[i],
-        author: authors[i]
+        author: author
       )
     end
   end

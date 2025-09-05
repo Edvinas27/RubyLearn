@@ -10,7 +10,7 @@ class ApplicationController < ActionController::API
       if token && (session_record = Session.find_signed(token))
         Current.session = session_record
       else
-        render json: { error: "Not authorized" }, status: :unauthorized
+        render json: { errors: ["Not authorized"] }, status: :unauthorized
       end
     end
 

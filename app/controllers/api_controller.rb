@@ -16,6 +16,6 @@ class ApiController < ApplicationController
   end
 
   def bad_request(error)
-    render json: { errors: [error.message] }, status: :bad_request
+    render json: { errors: error.record.errors.full_messages }, status: :unprocessable_content
   end
 end
