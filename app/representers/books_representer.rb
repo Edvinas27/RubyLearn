@@ -24,12 +24,16 @@ class BooksRepresenter
       id: book.id,
       title: book.title,
       author_name: author_name(book),
-      author_age: book.author.age
+      author_age: book.author&.age
     }
   end
 
   def author_name(book)
-    "#{book.author.first_name} #{book.author.last_name}"
+    if book.author
+      "#{book.author.first_name} #{book.author.last_name}"
+    else
+      nil
+    end
   end
 
 end

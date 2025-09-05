@@ -1,4 +1,4 @@
-class Api::V1::SessionsController < ApplicationController
+class Api::V1::SessionsController < ApiController
   skip_before_action :authenticate, only: :create
 
   before_action :set_session, only: %i[ show destroy ]
@@ -24,6 +24,7 @@ class Api::V1::SessionsController < ApplicationController
 
   def destroy
     @session.destroy
+    head :no_content
   end
 
   private

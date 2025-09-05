@@ -2,7 +2,7 @@
 
 class Api::V1::BooksController < ApiController
   def index
-    books = Book.all
+    books = Book.includes(:author).all
     render json: BooksRepresenter.new(books).as_json, status: :ok
   end
 
@@ -13,7 +13,7 @@ class Api::V1::BooksController < ApiController
     book.author = author
     book.save!
 
-    render json: BooksRepresenter.new(book), status: :created
+    render json: BooksRepresenter.new(book).as_json, status: :created
   end
 
   def destroy
@@ -38,6 +38,6 @@ class Api::V1::BooksController < ApiController
   end
 
   def author_params
-    params.require(:author).permit(:first_name, :last_name, :age)
+    params.require(:book).require(:author).permit(:first_name, :last_name, :age)
   end
 end

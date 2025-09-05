@@ -16,10 +16,10 @@ class Api::V1::AuthorsController < ApiController
   end
 
   def create
-    author = Author.new(author_params)
+    author = AuthorFinderOrCreator.call(author_params)
 
     if author.save
-      render json: AuthorRepresenter.new(author), status: :created
+      render json: AuthorRepresenter.new(author).as_json, status: :created
     end
   end
 

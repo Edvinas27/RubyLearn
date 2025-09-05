@@ -62,8 +62,7 @@ describe 'Books API', type: :request do
     context 'with valid parameters' do
       it 'creates a book' do
         book_params = {
-          book: { title: 'Gyvuliu Ukis' },
-          author: { first_name: 'George', last_name: 'Orwell', age: 46 }
+          book: { title: 'Gyvuliu Ukis', author: { first_name: 'George', last_name: 'Orwell', age: 46 } }
         }
         expect do
           post '/api/v1/books', params: book_params
@@ -82,8 +81,7 @@ describe 'Books API', type: :request do
     context 'with invalid parameters' do
       it 'returns error when title is too short' do
         book_params = {
-          book: { title: 'a' },
-          author: { first_name: 'George', last_name: 'Orwell', age: 46 }
+          book: { title: 'a', author: { first_name: 'George', last_name: 'Orwell', age: 46 } }
         }
         expect do
           post '/api/v1/books', params: book_params
@@ -95,8 +93,7 @@ describe 'Books API', type: :request do
 
       it 'returns error when author name is too short' do
         book_params = {
-          book: { title: 'Gyvuliu Ukis' },
-          author: { first_name: 'G', last_name: 'O', age: 46 }
+          book: { title: 'Gyvuliu Ukis', author: { first_name: 'G', last_name: 'O', age: 46 } },
         }
         expect do
           post '/api/v1/books', params: book_params
@@ -108,8 +105,7 @@ describe 'Books API', type: :request do
 
       it 'returns error when title is blank' do
         book_params = {
-          book: { title: '' },
-          author: { first_name: 'George', last_name: 'Orwell', age: 46 }
+          book: { title: '', author: { first_name: 'George', last_name: 'Orwell', age: 46 } },
         }
         expect do
           post '/api/v1/books', params: book_params
@@ -121,8 +117,7 @@ describe 'Books API', type: :request do
 
       it 'returns error when author name is blank' do
         book_params = {
-          book: { title: 'Gyvuliu Ukis' },
-          author: { first_name: '', last_name: '', age: 46 }
+          book: { title: 'Gyvuliu Ukis', author: { first_name: '', last_name: '', age: 46 } },
         }
         expect do
           post '/api/v1/books', params: book_params

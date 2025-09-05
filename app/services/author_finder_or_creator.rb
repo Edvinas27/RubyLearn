@@ -2,15 +2,13 @@
 
 class AuthorFinderOrCreator
   def self.call(author_data)
-    author = Author.find_by(
-      first_name: author_data[:first_name],
-      last_name: author_data[:last_name]
-    )
+    data = author_data.to_h.symbolize_keys
 
-    return author if author
+    first_name = data[:first_name].to_s.strip
+    last_name = data[:last_name].to_s.strip
 
-    author = Author.new(author_data)
-    author.save!
-    author
+    Author.find_or_create_by!(first_name: first_name, last_name: last_name) do |a|
+      a.age = data[:age] if data.key?(:age)
+    end
   end
 end
