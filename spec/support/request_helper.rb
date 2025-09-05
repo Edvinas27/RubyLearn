@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ResponseHelper
-  def json_response
+  def response_body
     JSON.parse(response.body, symbolize_names: true)
   end
 end

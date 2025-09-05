@@ -1,21 +1,14 @@
 # frozen_string_literal: true
 
-class AuthorRepresenter
-  def initialize(resource)
-    @resource = resource
-  end
+class AuthorRepresenter < BaseRepresenter
 
   def as_json
-    if resource.respond_to?(:each)
-      resource.map { |a| author_json(a) }
-    else
-      author_json(resource)
+    super do |res|
+      author_json(res)
     end
   end
 
   private
-
-  attr_accessor :resource
 
   def author_json(author)
     {

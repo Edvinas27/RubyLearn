@@ -19,14 +19,14 @@ describe 'Books API', type: :request do
         end.to change(Book, :count).from(0).to(2)
 
         expect(response).to have_http_status(:success)
-        expect(json_response.map { |b| b[:title] }).to contain_exactly('The Art of War', 'Le avventure di Cipollino')
+        expect(response_body.map { |b| b[:title] }).to contain_exactly('The Art of War', 'Le avventure di Cipollino')
       end
 
       it 'returns an empty array when there are no books' do
         get '/api/v1/books'
 
         expect(response).to have_http_status(:success)
-        expect(json_response).to eq([])
+        expect(response_body).to eq([])
       end
 
       it 'returns a book by id' do
@@ -35,7 +35,7 @@ describe 'Books API', type: :request do
         get "/api/v1/books/#{book.id}"
 
         expect(response).to have_http_status(:success)
-        expect(json_response).to include(
+        expect(response_body).to include(
           title: 'Don Quixote',
           author_name: 'Miguel de Cervantes',
           author_age: 68
@@ -69,7 +69,7 @@ describe 'Books API', type: :request do
         end.to change(Book, :count).from(0).to(1)
 
         expect(response).to have_http_status(:created)
-        expect(json_response).to include(
+        expect(response_body).to include(
           id: 1,
           title: 'Gyvuliu Ukis',
           author_name: 'George Orwell',
@@ -88,7 +88,7 @@ describe 'Books API', type: :request do
         end.not_to(change(Book, :count))
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response[:errors]).to include('Title is too short (minimum is 3 characters)')
+        expect(response_body[:errors]).to include('Title is too short (minimum is 3 characters)')
       end
 
       it 'returns error when author name is too short' do
@@ -100,7 +100,7 @@ describe 'Books API', type: :request do
         end.not_to(change(Book, :count))
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response[:errors]).to include("First name is too short (minimum is 2 characters)", "Last name is too short (minimum is 2 characters)")
+        expect(response_body[:errors]).to include("First name is too short (minimum is 2 characters)", "Last name is too short (minimum is 2 characters)")
       end
 
       it 'returns error when title is blank' do
@@ -112,7 +112,7 @@ describe 'Books API', type: :request do
         end.not_to(change(Book, :count))
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response[:errors]).to include("Title can't be blank")
+        expect(response_body[:errors]).to include("Title can't be blank")
       end
 
       it 'returns error when author name is blank' do
@@ -124,7 +124,7 @@ describe 'Books API', type: :request do
         end.not_to(change(Book, :count))
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(json_response[:errors]).to include("First name can't be blank", "Last name can't be blank")
+        expect(response_body[:errors]).to include("First name can't be blank", "Last name can't be blank")
       end
     end
   end
@@ -150,7 +150,7 @@ describe 'Books API', type: :request do
         end.not_to(change(Book, :count))
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response[:errors].first).to include("Couldn't find Book", '2048')
+        expect(response_body[:errors].first).to include("Couldn't find Book", '2048')
       end
     end
   end

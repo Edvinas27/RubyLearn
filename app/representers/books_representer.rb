@@ -1,23 +1,14 @@
 # frozen_string_literal: true
 
-class BooksRepresenter
-  def initialize(resource)
-    @resource = resource
-  end
+class BooksRepresenter < BaseRepresenter
 
   def as_json
-    if resource.respond_to?(:each)
-      resource.map { |b| book_json(b) }
-    else
-      book_json(resource)
+    super do |res|
+      book_json(res)
     end
   end
 
   private
-
-  # Allows private methods to access @resource as resource.
-  # Improves readability and encapsulation.
-  attr_reader :resource
 
   def book_json(book)
     {
