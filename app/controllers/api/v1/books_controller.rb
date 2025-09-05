@@ -4,7 +4,8 @@ module Api
   module V1
     class BooksController < ApiController
       def index
-        render json: Book.all, status: :ok, only: %i[id title author]
+        books = Book.all
+        render json: BooksRepresenter.new(books).as_json, status: :ok
       end
 
       def create
@@ -28,13 +29,13 @@ module Api
         end
 
         book = Book.find(params[:id])
-        render json: book, status: :ok, only: %i[id title author]
+        render json: BooksRepresenter.new(book).as_json, status: :ok
       end
 
       private
 
       def book_params
-        params.require(:book).permit(%i[title author])
+        params.permit(%i[title author])
       end
     end
   end

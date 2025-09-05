@@ -12,7 +12,7 @@ class Api::V1::SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(email: params[:email], password: params[:password])
+    if (user = User.authenticate_by(email: params[:email], password: params[:password]))
       @session = user.sessions.create!
       response.set_header "X-Session-Token", @session.signed_id
 
@@ -21,7 +21,6 @@ class Api::V1::SessionsController < ApplicationController
       render json: { error: "That email or password is incorrect" }, status: :unauthorized
     end
   end
-
 
   def destroy
     @session.destroy

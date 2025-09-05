@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'Books API', type: :request do
   before do
-    allow_any_instance_of(ApplicationController).to receive(:authenticate).and_return(true)
+    allow_any_instance_of(ApiController).to receive(:authenticate).and_return(true)
   end
   describe 'GET /api/v1/' do
     context 'with valid parameters' do
