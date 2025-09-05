@@ -73,7 +73,9 @@ GEM
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
     ast (2.4.3)
+    authentication-zero (3.0.2)
     base64 (0.3.0)
+    bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
     bcrypt_pbkdf (1.1.1-arm64-darwin)
     bcrypt_pbkdf (1.1.1-x86_64-darwin)
@@ -266,6 +268,9 @@ GEM
     rubocop-ast (1.46.0)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
+    rubocop-factory_bot (2.27.1)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
     rubocop-performance (1.25.0)
       lint_roller (~> 1.1)
       rubocop (>= 1.75.0, < 2.0)
@@ -280,6 +285,13 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
+    rubocop-rspec (3.6.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
+    rubocop-rspec_rails (2.31.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.72, >= 1.72.1)
+      rubocop-rspec (~> 3.5)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
     solid_cable (3.0.12)
@@ -347,6 +359,8 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  authentication-zero (~> 3.0, >= 3.0.2)
+  bcrypt (~> 3.1.7)
   bootsnap
   brakeman
   debug
@@ -355,7 +369,10 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 8.0.2, >= 8.0.2.1)
   rspec-rails (~> 8.0, >= 8.0.2)
+  rubocop-factory_bot (~> 2.27, >= 2.27.1)
   rubocop-rails-omakase
+  rubocop-rspec (~> 3.6)
+  rubocop-rspec_rails (~> 2.31)
   solid_cable
   solid_cache
   solid_queue

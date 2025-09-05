@@ -1,19 +1,21 @@
 class ApplicationController < ActionController::API
-  rescue_from ActiveRecord::RecordNotDestroyed, with: :record_not_destroyed
-  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
-  rescue_from ActiveRecord::RecordInvalid, with: :bad_request
+
+  before_action :set_current_request_details
+  before_action :authenticate
 
   private
+    def authenticate
+      token = request.headers['X-Session-Token']
 
-  def record_not_destroyed(error)
-    render json: { errors: error.record.errors.full_messages }, status: :unprocessable_content
-  end
+      if token && (session_record = Session.find_signed(token))
+        Current.session = session_record
+      else
+        render json: { errors: ["Not authorized"] }, status: :unauthorized
+      end
+    end
 
-  def record_not_found(error)
-    render json: { errors: [error.message] }, status: :not_found
-  end
-
-  def bad_request(error)
-    render json: {errors: [error.message] }, status: :bad_request
-  end
+    def set_current_request_details
+      Current.user_agent = request.user_agent
+      Current.ip_address = request.ip
+    end
 end

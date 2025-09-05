@@ -1,15 +1,19 @@
-class Api::V1::BooksController < ApplicationController
+# frozen_string_literal: true
+
+class Api::V1::BooksController < ApiController
   def index
-    render json: Book.all, status: :ok, only: %i[id title author]
+    books = Book.includes(:author).all
+    render json: BooksRepresenter.new(books).as_json, status: :ok
   end
 
   def create
-    book = Book.new(book_params)
-    if book.save
-      render json: book, status: :created
-    else
-      render json: book.errors, status: :unprocessable_content
-    end
+    author = AuthorFinderOrCreator.call(author_params)
+
+    book = Book.new(book_params.except(:author))
+    book.author = author
+    book.save!
+
+    render json: BooksRepresenter.new(book).as_json, status: :created
   end
 
   def destroy
@@ -20,17 +24,20 @@ class Api::V1::BooksController < ApplicationController
 
   def show
     if params[:id] !~ /^\d+$/ # Check if ID is not a number
-      render json: {errors: ["Invalid ID Format"]}, status: :bad_request and return
+      render json: { errors: ['Invalid ID Format'] }, status: :bad_request and return
     end
 
     book = Book.find(params[:id])
-    render json: book, status: :ok, only: %i[id title author]
+    render json: BooksRepresenter.new(book).as_json, status: :ok
   end
 
   private
 
   def book_params
-    params.require(:book).permit(%i[title author])
+    params.require(:book).permit(:title, author: [:first_name, :last_name, :age])
   end
 
+  def author_params
+    params.require(:book).require(:author).permit(:first_name, :last_name, :age)
+  end
 end
