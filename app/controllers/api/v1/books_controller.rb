@@ -7,12 +7,13 @@ class Api::V1::BooksController < ApiController
   end
 
   def create
-    author = AuthorFinderOrCreator.call(author_params)
-
-    book = Book.new(book_params.except(:author))
-    book.author = author
-    book.save!
-
+    book = nil
+    # This is for ensuring atomic transactions, either all succeed or none are saved.
+    # If author creation was successful but book creation fails, author would not be saved in db.
+    ActiveRecord::Base.transaction do
+      author = AuthorFinderOrCreator.call(author_params)
+      book = Book.create!(book_params.except(:author).merge(author: author))
+    end
     render json: BooksRepresenter.new(book).as_json, status: :created
   end
 
