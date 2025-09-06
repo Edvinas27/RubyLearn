@@ -2,19 +2,25 @@
 
 class Api::V1::BooksController < ApiController
   def index
-    books = Book.includes(:author).all
-    render json: BooksRepresenter.new(books).as_json, status: :ok
+    result = GetBooks.call
+
+    if result.success?
+      render json: BooksRepresenter.new(result.books).as_json, status: :ok
+    end
   end
 
   def create
-    book = nil
-    # This is for ensuring atomic transactions, either all succeed or none are saved.
-    # If author creation was successful but book creation fails, author would not be saved in db.
-    ActiveRecord::Base.transaction do
-      author = AuthorFinderOrCreator.call(author_params)
-      book = Book.create!(book_params.except(:author).merge(author: author))
+    result = CreateBookWithAuthor.call(
+      book_params: book_params,
+      author_params: author_params
+    )
+
+    if result.success?
+      render json: BooksRepresenter.new(result.book).as_json, status: :created
+    else
+      render json: { errors: Array(result.error) }, status: :unprocessable_content
+
     end
-    render json: BooksRepresenter.new(book).as_json, status: :created
   end
 
   def destroy
@@ -24,12 +30,18 @@ class Api::V1::BooksController < ApiController
   end
 
   def show
-    if params[:id] !~ /^\d+$/ # Check if ID is not a number
-      render json: { errors: ['Invalid ID Format'] }, status: :bad_request and return
-    end
+    result = GetBook.call(book_id: params[:id])
 
-    book = Book.find(params[:id])
-    render json: BooksRepresenter.new(book).as_json, status: :ok
+    if result.success?
+      render json: BooksRepresenter.new(result.book).as_json, status: :ok
+    else
+      status = case result.error
+               when 'Invalid ID Format' then :bad_request
+               when 'Book not found' then :not_found
+               else :internal_server_error
+               end
+      render json: { errors: [result.error] }, status: status
+    end
   end
 
   private

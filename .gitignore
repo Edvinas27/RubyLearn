@@ -40,3 +40,4 @@ tmp/storage
 vendor/
 .idea/
 /test/
+.DS_STORE
